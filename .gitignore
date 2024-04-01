@@ -2,8 +2,9 @@
 __pycache__/
 *.py[cod]
 *$py.class
+storage.db
 
-# C extensions
+# C extensions0
 *.so
 
 # Distribution / packaging
