@@ -1,6 +1,7 @@
 from typing import Dict
 from src.models.settings.connection import db_connection_handler
 from src.models.entities.events import Events
+from src.models.entities.attendees import Attendees
 from sqlalchemy.exc import IntegrityError, NoResultFound
 
 
@@ -38,3 +39,25 @@ class EventRepository:
             except NoResultFound:
                 return None
             
+    def count_event_attendees(self, event_id:str) -> Dict:
+        with db_connection_handler as database:
+            event_attendees_count = (
+                database.session
+                    .query(Events)
+                    .join(Attendees, Events.id == Attendees.event_id)
+                    .filter(Events.id == event_id)
+                    .with_entities(
+                        Events.maximum_attendees,
+                        Attendees.id
+                    )
+                    .all()
+            )
+            if not event_attendees_count:
+                return {
+                    "maximum_attendees": 0,
+                    "attendees_amout": 0,
+                }
+            return {
+                "maximum_attendees": event_attendees_count[0].maximum_attendees,
+                "attendees_amout": len(event_attendees_count),
+            }
