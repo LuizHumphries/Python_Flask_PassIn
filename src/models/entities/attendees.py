@@ -11,4 +11,4 @@ class Attendees(Base):
     created_at = Column(DateTime, nullable=False, default=func.now())
 
     def __repr__(self):
-        return f"Events [name={self.name}, email={self.email}, event_id={self.event_id}]"
+        return f"Attendees [name={self.name}, email={self.email}, event_id={self.event_id}]"
