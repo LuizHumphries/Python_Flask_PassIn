@@ -4,6 +4,7 @@ from src.models.entities.events import Events
 from src.models.entities.attendees import Attendees
 from src.models.entities.check_ins import CheckIns
 from sqlalchemy.exc import NoResultFound, IntegrityError
+from src.errors.error_types.http_conflict import HttpConflictError
 
 
 class AttendeesRepository:
@@ -21,7 +22,7 @@ class AttendeesRepository:
                 database.session.commit()
                 return attendees_info
             except IntegrityError:
-                raise Exception("Attendees already in database")
+                raise HttpConflictError("Attendees already in database")
             except Exception as exception:
                 database.session.rollback()
                 raise exception
@@ -50,7 +51,7 @@ class AttendeesRepository:
             attendees = (
                 database.session
                     .query(Attendees)
-                    .outerjoin(CheckIns, CheckIns.attendeeId == Attendees.id)
+                    .outerjoin(CheckIns, CheckIns.attendee_id == Attendees.id)
                     .filter(Attendees.event_id == event_id)
                     .with_entities(
                         Attendees.id,
